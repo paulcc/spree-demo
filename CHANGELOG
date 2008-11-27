@@ -1,0 +1,116 @@
+== 0.5.0
+
+* #	55	-	Variants need shipping weights to do shipping calculations.
+* #	66	-	Add a migration generator for extensions
+* #	83	-	Internal Server Error when adding product property to product 
+* #	90	-	Support for sample data in extensions
+* #	91	-	Shipping address should be limited to the countries that are configured by a shipping zone
+* #	92	-	Configuration screen for inventory settings.
+* #	95	-	Bogus gateway should decline card instead of raising an exception
+* #	96	-	Creating first Taxon fails with blank database
+* #	97	-	Exception when returning to cart from shipping method selection screen
+* #	98	-	Exception occurs when changing country dropdown for Ship Address
+* #	99	-	Provide built-in mechanism for dealing with near static content
+* #	100	-	Add support for require gems inside extensions and an easy way to install them.
+* #	101	-	Add configuration setting to make bogus gateway in development mode optional
+* #	102	-	Credit card information is not being stored.
+* #	103	-	Rails 2.1.2 Support
+* #	105	-	Error when viewing order with non US state in either address.
+* #	106	-	Adding a new variant causes NoMethodError
+* #	107	-	SKU not saving for products (empty variant)
+* #	108	-	Correct after_transition for paid state in Order model
+* #	109	-	Add pruchase method to Spree::PaymentGateway
+* #	110	-	Empty address cannot be validated
+* #	112	-	Check for user before emailing order confirmations
+* #	113	-	Property model references bogus value table.
+* #	114	-	Remove unsupported deactivate method from extensions
+* #	116	-	Updating option types causes all option values to disappear
+* #	118	-	Default authenticaiton screen should be login
+* #	119	-	Include login fields on user creation screen
+* #	120	-	Orders search does not return any results.
+* #	122	-	Credit card Number text field enforces 17 character restriction
+* # 124 - Move the pay action out of the FSM for order.
+* # 125 - Sales Tax calculation causes exception
+* # 126 - Incomplete orders are appearing in admin orders views.
+
+== 0.4.1
+
+* #94 - User must be logged in to empty cart
+* #89 - Cannot run specs for custom extensions
+* #88 - Gateway Configuration Gives Error
+
+== 0.4.0
+
+* Initial support for initialization
+* Rails 2.1 support
+* #38 - Credit card numbers are being logged
+* #39 - Rails 2.1 Support
+* #43 - Increase application width
+* #48 - Support fo Pay Pal Website Payments Pro
+* #51 - SEO Permalinks for Products
+* #57 - Optionally store cc numbers in the database
+* #59 - Convert line breaks to <p> elements in prodcut description
+* #60 - Fix image clipping in product details
+* #61 - Price change is not always reflected in the actual order
+* #62 - Ability to override mailer templates in extensions
+* #63 - New spree applications should use a random secret key for sessions
+* #64 - Extension support of "public" assets
+* #69 - New spree project is missing script/plugin
+* #79 - Frozen gems inside of the Spree source are not copied into new applications 
+* #80 - Named routes don't work when defined inside its own extension using define_routes.
+* #84 - Generating Thumbnails for products: wrong aspect ratio
+* #82 - Unable to start server when both rails and spree are frozen
+
+== 0.2.0 2008-06-05
+
+* Extension support.
+* Improved user/address model.
+* Improved payment gateway configuraiton.
+
+== 0.0.9 2008-04-23
+
+* Changed source code layout.  Spree now runs in stand alone, gem and application modes. 
+* Removed dependency on Engines plugin.
+* Removed free tagging (will be made obsolete by categorization features in upcoming release)
+* #20 - Product images in arbitrary order.
+ 
+== 0.0.8 2008-03-27
+
+* Fixed a few new bugs introduced by the variant refactoring
+* Replaced some instances of the old Railscart logo
+
+== 0.0.7 2008-03-26
+
+* Fixed an error with improperly named helper in one of the mailers (this was preventing checkout)
+* Removed several trivial references to old project name 
+
+== 0.0.6 2008-03-26
+
+* Now properly requires the mini_magick dependency
+* Fixed a few minor rake task issues
+* Other very minor bug fixes
+
+== 0.0.5 2008-02-26
+
+* Test release of the newly named gem (formerly known as railscart)
+
+== 0.0.4 2008-02-12
+
+* Cookie sessions (no more db sessions)
+* Streamlined migration stuff
+* Removed database.master.yml configuration stuff (no longer really necessary)
+* Improved data model for images
+* Fixed --edge option to point to new railscart SVN location
+
+== 0.0.3 2008-02-07
+
+* Added --edge option to railscart command (which gets latest version of all plugins from SVN.)
+* Refactored the product optioning stuff.
+
+== 0.0.2 2008-01-29
+
+* Additional gem release testing.
+
+== 0.0.1 2008-01-29
+
+* Initial release.  Test of gem release mechanism.
