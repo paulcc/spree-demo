@@ -1,0 +1,3 @@
+[submodule "vendor/spree"]
+	path = vendor/spree
+	url = git://github.com/schof/spree.git
