@@ -6,7 +6,6 @@
 
 # Specifies gem version of Rails to use when vendor/rails is not present
 SPREE_GEM_VERSION = '0.5.99' unless defined? SPREE_GEM_VERSION
-RAILS_GEM_VERSION = "2.1.2" unless defined? RAILS_GEM_VERSION
           
 # Bootstrap the Rails environment, frameworks, and default configuration
 require File.join(File.dirname(__FILE__), 'boot')
@@ -27,12 +26,11 @@ Spree::Initializer.run do |config|
   # config.gem "hpricot", :version => '0.6', :source => "http://code.whytheluckystiff.net"
   # config.gem "aws-s3", :lib => "aws/s3"
 
-  config.gem "has_many_polymorphs", :version => '2.12'
   config.gem "highline", :version => '1.4.0'
-  config.gem "mini_magick", :version => '1.2.3'
-  config.gem "activemerchant", :lib => "active_merchant", :version => '1.3.2'
+  config.gem "activemerchant", :lib => "active_merchant", :version => '1.4.0'
   config.gem "tlsmail"
   config.gem 'active_presenter', :version => '0.0.4'
+  config.gem 'activerecord-tableless', :lib => 'tableless', :version => '0.1.0'
 
   # Only load the plugins named here, in the order given. By default, all plugins 
   # in vendor/plugins are loaded in alphabetical order.
@@ -57,8 +55,8 @@ Spree::Initializer.run do |config|
   # Make sure the secret is at least 30 characters and all random, 
   # no regular words or you'll be exposed to dictionary attacks.
   config.action_controller.session = {
-    :session_key => '_spree-demo_session',
-    :secret      => '0ffffec16cfdac200f6142ea8fd13c0156b6042e4d35769a13883ab3234978245aaa77d83be8948ef53a455dcb4df3038622d85c857fe30ad778f494c3143f35' 
+    :session_key => '_<%= app_name %>_session',
+    :secret      => '<%= app_secret_key_to_be_replaced_in_real_app_by_generator %>' 
   }
 
   # Use the database for sessions instead of the cookie-based default,
@@ -73,20 +71,11 @@ Spree::Initializer.run do |config|
 
   # Activate observers that should always be running
   # config.active_record.observers = :cacher, :garbage_collector  
-end
-
-
-# Load extension gems.
-config = Rails::Configuration.new
-Object.subclasses_of(Spree::Extension).each do |extension|
-  if extension.respond_to? :require_gems
-    extension.require_gems(config)
-  end
-end
-
-config.gems.each do |gem|
-  gem.add_load_paths
-  gem.load
+  
+  # The internationalization framework can be changed to have another default locale (standard is :en) or more load paths.
+  # All files from config/locales/*.rb,yml are added automatically.
+  #config.i18n.load_path << Dir[File.join(RAILS_ROOT, 'my', 'locales', '*.{rb,yml}')]
+  config.i18n.default_locale = :'en-US'
 end
 
 # Add new inflection rules using the following format 
