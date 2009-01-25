@@ -1,36 +1,5 @@
 require 'activerecord'
 
-namespace :demo do
-  # Specialized version of bootstrap that can be run in production mode (since this is just a demo.)  
-  desc "Migrate schema to version 0 and back up again. WARNING: Destroys all data in tables!!"
-  task :remigrate => :environment do
-    # Drop all tables
-    ActiveRecord::Base.connection.tables.each { |t| ActiveRecord::Base.connection.drop_table t }
-    # Migrate upward 
-    Rake::Task["db:migrate"].invoke      
-    # Dump the schema
-    Rake::Task["db:schema:dump"].invoke
-  end
-  
-  # Specialized version of bootstrap that can be run in production mode (since this is just a demo.)  
-  desc "Bootstrap your database for Spree."
-  task :bootstrap  => :environment do
-    ENV['AUTO_ACCEPT'] = 'yes'
-    ENV['SKIP_NAG'] = 'yes'
-
-    # Remigrate
-    Rake::Task["db:remigrate"].invoke
-  
-    require 'spree/setup'
-      
-    attributes = {
-      :admin_password => "spree",
-      :admin_email => "spree@example.com"          
-    }
-    Spree::Setup.bootstrap attributes
-  end
-end
-
 namespace :db do
   desc "Bootstrap your database for Spree."
   task :bootstrap  => :environment do
