@@ -30,7 +30,6 @@ namespace :deploy do
   end  
   desc "Sylink shared configs and folders on each release."
   task :symlink_shared do
-    run "ln -nfs #{shared_path}/config/mongrel_cluster.yml #{release_path}/config/mongrel_cluster.yml"
     run "ln -nfs #{shared_path}/config/database.yml #{release_path}/config/database.yml"
   end
   desc "Run the rake bootstrap task."
