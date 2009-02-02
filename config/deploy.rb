@@ -25,8 +25,8 @@ set :deploy_via, :remote_cache
 namespace :deploy do
   desc "Tells Passenger to restart the app."
   task :restart do
-    run "cd #{release_path}; mongrel_rails cluster::restart"
-    #run "touch #{current_path}/tmp/restart.txt"
+    #run "cd #{release_path}; mongrel_rails cluster::restart"
+    run "touch #{current_path}/tmp/restart.txt"
   end  
   desc "Sylink shared configs and folders on each release."
   task :symlink_shared do
@@ -35,8 +35,13 @@ namespace :deploy do
   end
   desc "Run the rake bootstrap task."
   task :rake_bootstrap do
-    run("cd #{release_path}; rake demo:bootstrap RAILS_ENV=production")
+    run("cd #{release_path}; rake db:bootstrap RAILS_ENV=demo AUTO_ACCEPT=true")
+  end
+  desc "Update to Spree edge (instead of lastes commit for submodule)"
+  task :update_to_edge do
+    run("cd #{release_path}/vendor/spree; git pull origin master")
   end
 end
 after 'deploy:update_code', 'deploy:symlink_shared'
+after 'deploy:update_code', 'deploy:update_to_edge'
 after 'deploy:update_code', 'deploy:rake_bootstrap'
