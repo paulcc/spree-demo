@@ -5,8 +5,9 @@
 <%= stylesheet_link_tag 'lightbox.css' %>
 <% end -%>
 <script type="text/javascript">
-$(function() {
-	$('#gallery a').lightBox();
+var $j = jQuery.noConflict();
+$j(function() {
+	$j('#gallery a').lightBox();
 });
 </script>
 <div id="gallery">
