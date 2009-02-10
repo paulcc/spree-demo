@@ -3,8 +3,8 @@ namespace :db do
   task :bootstrap  => :environment do
     # load initial database fixtures (in db/sample/*.yml) into the current environment's database
     ActiveRecord::Base.establish_connection(RAILS_ENV.to_sym)
-    Dir.glob(File.join(VariantLightboxExtension.root, "db", 'sample', '*.{yml,csv}')).each do |fixture_file|
-      Fixtures.create_fixtures("#{VariantLightboxExtension.root}/db/sample", File.basename(fixture_file, '.*'))
+    Dir.glob(File.join(ProductLightboxExtension.root, "db", 'sample', '*.{yml,csv}')).each do |fixture_file|
+      Fixtures.create_fixtures("#{ProductLightboxExtension.root}/db/sample", File.basename(fixture_file, '.*'))
     end
   end
 end
@@ -12,11 +12,11 @@ end
 namespace :spree do
   namespace :extensions do
     namespace :variant_lightbox do
-      desc "Copies public assets of the Variant Lightbox to the instance public/ directory."
+      desc "Copies public assets of the Product Lightbox to the instance public/ directory."
       task :update => :environment do
         is_svn_git_or_dir = proc {|path| path =~ /\.svn/ || path =~ /\.git/ || File.directory?(path) }
-        Dir[VariantLightboxExtension.root + "/public/**/*"].reject(&is_svn_git_or_dir).each do |file|
-          path = file.sub(VariantLightboxExtension.root, '')
+        Dir[ProductLightboxExtension.root + "/public/**/*"].reject(&is_svn_git_or_dir).each do |file|
+          path = file.sub(ProductLightboxExtension.root, '')
           directory = File.dirname(path)
           puts "Copying #{path}..."
           mkdir_p RAILS_ROOT + directory

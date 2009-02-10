@@ -1,3 +1,3 @@
-= Variant Lightbox
+= Product Lightbox
 
 Description goes here
