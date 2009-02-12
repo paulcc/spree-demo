@@ -1,3 +1,12 @@
 [submodule "vendor/spree"]
 	path = vendor/spree
 	url = git://github.com/schof/spree.git
+[submodule "vendor/extensions/spree-blog"]
+	path = vendor/extensions/spree-blog
+	url = git://github.com/paulcc/spree-blog.git
+[submodule "vendor/extensions/spree-reviews"]
+	path = vendor/extensions/spree-reviews
+	url = git://github.com/paulcc/spree-reviews.git
+[submodule "vendor/extensions/spree-promotions"]
+	path = vendor/extensions/spree-promotions
+	url = git://github.com/paulcc/spree-promotions.git
