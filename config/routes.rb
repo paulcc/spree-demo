@@ -29,6 +29,11 @@ ActionController::Routing::Routes.draw do |map|
   map.signup '/signup', :controller => 'users', :action => 'new'
   map.admin '/admin', :controller => 'admin/overview', :action => 'index'  
 
+  # custom route for checkout since its not really a resource
+  map.checkout 'orders/:order_number/checkout', :controller => 'checkout', :action => 'new'
+  map.checkout 'orders/:order_number/complete', :controller => 'checkout', :action => 'create'
+  map.checkout 'orders/:order_number/checkout/:action', :controller => 'checkout'
+
   map.resources :tax_categories
   map.resources :countries, :has_many => :states, :actions => [:index]
   map.resources :states, :actions => [:index]
