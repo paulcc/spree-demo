@@ -1,0 +1,54 @@
+# Default database configuration
+
+development:
+  adapter: mysql
+  database: spree_dev
+  username: spree
+  password: spree
+  host: localhost
+
+#development:
+  #adapter: postgresql
+  #database: spree_dev
+  #username: spree
+  #password: spree_dev
+  #host: localhost
+  
+#development:
+#  adapter: sqlite3
+#  database: db/development.sqlite3
+
+staging:
+  #adapter: sqlite3
+  #database: db/staging.sqlite3
+  adapter: mysql
+  database: spree_dev
+  username: spree
+  password: spree
+  host: localhost
+test:
+  adapter: mysql
+  database: spree_test
+  username: spree
+  password: spree
+  host: localhost
+  
+#test:
+#  adapter: postgresql
+#  database: spree_test
+#  username: spree
+#  password: spree_dev
+#  host: localhost
+
+#test:
+#  adapter: sqlite3
+#  database: db/test.sqlite3
+
+production:
+  adapter: sqlite3
+  database: db/production.sqlite3
+
+# special mode for demo.spreehq.org (you can ignore this)                                    
+demo:
+  adapter: sqlite3
+  database: db/production.sqlite3

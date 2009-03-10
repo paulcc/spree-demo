@@ -1,0 +1,25 @@
+<table class="admin-report" width="545">
+  <thead>
+    <tr>
+      <th><%= t("name") %></th>
+      <th><%= t("abbreviation") %></th>
+      <th><%= t("action") %></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @states.each do |state| %>
+      <tr class="<%= cycle('even', 'odd') %>">
+        <td><%=state.name %></td>
+        <td><%=state.abbr %></td>
+        <td>
+          <%=link_to t("edit"), edit_admin_country_state_url(@country, state) %> |
+          <%=link_to t("delete"), object_url(state), :method => :delete %>
+        </td>
+      </tr>
+    <% end %>
+    <% if @states.empty? %>
+      <tr><td colspan="3">None.</td></tr>
+    <% end %>
+  </tbody>
+</table>
+<%= link_to t("new_state"), new_admin_country_state_url(@country) %>
