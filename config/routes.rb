@@ -74,7 +74,8 @@ ActionController::Routing::Routes.draw do |map|
     admin.resource :general_settings
     admin.resources :taxonomies do |taxonomy|
       taxonomy.resources :taxons
-    end
+    end 
+    admin.resources :reports, :only => [:index, :show], :collection => {:sales_total => :get}
   end
   
   # Install the default route as the lowest priority.
