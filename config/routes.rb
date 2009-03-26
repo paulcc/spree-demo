@@ -29,6 +29,11 @@ ActionController::Routing::Routes.draw do |map|
   map.signup '/signup', :controller => 'users', :action => 'new'
   map.admin '/admin', :controller => 'admin/overview', :action => 'index'  
 
+  # custom route for checkout since its not really a resource
+  map.checkout 'orders/:order_number/checkout', :controller => 'checkout', :action => 'new'
+  map.checkout 'orders/:order_number/complete', :controller => 'checkout', :action => 'create'
+  map.checkout 'orders/:order_number/checkout/:action', :controller => 'checkout'
+
   map.resources :tax_categories
   map.resources :countries, :has_many => :states, :actions => [:index]
   map.resources :states, :actions => [:index]
@@ -69,7 +74,8 @@ ActionController::Routing::Routes.draw do |map|
     admin.resource :general_settings
     admin.resources :taxonomies do |taxonomy|
       taxonomy.resources :taxons
-    end
+    end 
+    admin.resources :reports, :only => [:index, :show], :collection => {:sales_total => :get}
   end
   
   # Install the default route as the lowest priority.
