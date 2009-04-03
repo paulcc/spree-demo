@@ -2,3 +2,4 @@ config/database.yml
 db/*
 log/*
 public/assets
+public/stylesheets/compiled
