@@ -1,3 +1,33 @@
+//On page load
+$(function() {  
+  $('#checkout_same_address').sameAddress();
+  $('span#bcountry select').change(function() { update_state('b'); });
+  $('span#scountry select').change(function() { update_state('s'); });
+  get_states();
+  
+  // hook up the continue buttons for each section
+  for(var i=0; i < regions.length; i++) {                               
+    $('#continue_' + regions[i]).click(function() { eval( "continue_button(this);") });   
+  }                           
+          
+  //$('form#checkout_form').submit(function() { return !($('div#confirm_order').hasClass('checkout_disabled')); });
+
+	// hookup the radio buttons for registration
+	$('#choose_register').click(function() { $('div#new_user').show(); $('div#guest_user, div#existing_user').hide(); });
+	$('#choose_existing').click(function() { $('div#existing_user').show(); $('div#guest_user, div#new_user').hide(); });
+	$('#choose_guest').click(function() { $('div#guest_user').show(); $('div#existing_user, div#new_user').hide(); });	
+
+  // activate first region
+  shift_to_region(regions[0]);  
+  
+  $('input#user_password_confirmation, input#user_session_password').keyup(function(e) {
+    if(e.keyCode == 13) {
+      $('#continue_registration').click();
+    }
+  });
+  
+})
+
 jQuery.fn.sameAddress = function() {
   this.click(function() {
     if(!$(this).attr('checked')) {
@@ -11,21 +41,6 @@ jQuery.fn.sameAddress = function() {
     update_state('s');
   })
 }
-
-//On page load
-$(function() {  
-  $('#checkout_same_address').sameAddress();
-  $('span#bcountry select').change(function() { update_state('b'); });
-  $('span#scountry select').change(function() { update_state('s'); });
-  get_states();
-  
-  // hook up the continue buttons for each section
-  for(var i=0; i < regions.length; i++) {                               
-    $('#continue_' + regions[i]).click(function() { eval( "continue_button(this);") });   
-  }                           
-  // activate first region
-  shift_to_region(regions[0]); 
-})
 
 //Initial state mapper on page load
 var state_mapper;
@@ -121,7 +136,7 @@ var continue_button = function(button) {
 var validate_section = function(region) {
   var validator = $('form#checkout_form').validate();
   var valid = true;
-  $('div#' + region + ' input, div#' + region + ' select, div#' + region + ' textarea').each(function() {
+  $('div#' + region + ' input:visible, div#' + region + ' select:visible, div#' + region + ' textarea:visible').each(function() {
     if(!validator.element(this)) {
       valid = false;
     }
@@ -275,6 +290,87 @@ var update_confirmation = function(order) {
   $('span#ship_amount').html(order.ship_amount);
   $('span#tax_amount').html(order.tax_amount);                                  
   $('span#ship_method').html(order.ship_method);                                    
+}       
+
+var submit_registration = function() {
+  // no need to do any ajax, user is already logged in
+  if ($('div#already_logged_in:hidden').size() == 0) return true;
+  var register_method = $("input[name='choose_registration']:checked").val();
+  
+  $('div#registration_error').removeClass('error').html("");    
+
+	if (register_method == "login") {
+		ajax_login();
+		return ($('div#registration_error:hidden').size() == 1);
+	}
+
+	if (register_method == "register") {
+		ajax_register();
+		return ($('div#registration_error:hidden').size() == 1);
+	}
+		
+  return ($('div#registration_error:hidden').size() == 1);  
+};
+
+var ajax_login = function() {
+  $.ajax({
+		async: false,
+    type: "POST",
+    url: '/user_session',                                 
+    beforeSend : function (xhr) {
+      xhr.setRequestHeader('Accept-Encoding', 'identity');
+    },      
+    dataType: "json",
+    data: $('#checkout_form').serialize(),
+    success: function(result) {  
+      if (result) {
+				$('div#already_logged_in').show();
+				$('div#register_or_guest').hide();
+        // todo update login partial
+      } else {
+        registration_error("Invalid username or password.");
+      };
+    },
+    error: function (XMLHttpRequest, textStatus, errorThrown) {
+      // TODO - put some real error handling in here
+      $("#ajax_error").html(XMLHttpRequest.responseText);           
+    }
+  });  	
+}
+
+var ajax_register = function() {
+  $.ajax({
+		async: false,
+    type: "POST",
+    url: '/users',                                 
+    beforeSend : function (xhr) {
+      xhr.setRequestHeader('Accept-Encoding', 'identity');
+    },      
+    dataType: "json",
+    data: $('#checkout_form').serialize(),
+    success: function(result) {  
+      if (result == true) {
+				$('div#already_logged_in').show();
+				$('div#register_or_guest').hide();
+        // todo update login partial
+      } else {                                         
+        var error_msg = "Unable to register user";              
+        for (var i=0; i < result.length; i++) {
+          error_msg += "<br/>";
+          error_msg += result[i][0] + ": " + result[i][1];
+        }
+        registration_error(error_msg);
+      };
+    },
+    error: function (XMLHttpRequest, textStatus, errorThrown) {
+      // TODO - put some real error handling in here
+      $("#ajax_error").html(XMLHttpRequest.responseText);           
+    }
+  });  	
+}
+
+var registration_error = function(error_message) {
+  $('div#registration_error').addClass('error').html(error_message);
 }
 
 var submit_payment = function() {             
@@ -282,5 +378,6 @@ var submit_payment = function() {
 };    
 
 var submit_confirmation = function() {  
-  return true;
+  //$('form#checkout_form').submit();
+  $('#post-final').click();
 };
