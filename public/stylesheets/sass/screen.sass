@@ -18,9 +18,10 @@
 !link_hover_color = #eee
 !lighter_text_color = #666
 !medium_blue = #2E6AB1
+!lightest_blue = #BBDAFD
 !light_blue = #E5F2F8
 !dark_blue = #162F54
-!error_text_color = #c00
+!light_green = #92D363
 !selling_price_color = !medium_blue
 
 // Custom mixins
@@ -121,12 +122,15 @@ h1
       span
         :color #333
 
+div#login-bar
+  :display inline
+  
 ul#language-bar
   +inline-list
   strong
     :font-weight normal
 ul#nav-bar
-  :line-height 40px
+  :line-height 50px
   :float right
   :clear both
   :font-size 1.2em
@@ -260,29 +264,44 @@ ul#product-thumbnails
 #subtotal
   :float right
 
-#signup #new-customer
+#signup #new-customer, #login #existing-customer
   +column(12)
-#signup #existing-customer
-  +column(12)
-
-
+  h2
+    :margin-bottom .25em
+  p
+    :margin-bottom 10px
+    input.title
+      :padding 3px
+      :margin 0px
 
 // Errors
-.formError, .errorExplanation h2
-  color = !error_text_color
+.formError, .errorExplanation
+  :font-size 1.3em
+  :margin-bottom 1em
+  :padding 0.8em
+  :-moz-border-radius 5px
+  :-webkit-border-radius 5px
+  :background #F4B4B4 url(/images/shadow_top.png) repeat-x scroll 0pt -50px
+  :border 1px solid #000
+  :color #000
+  p
+    :margin 0px
+  ul
+    :margin-bottom 0px
+  h2
+    :font-weight bold
+    :font-size 1.0em
+    :margin 0px
 
-#errorExplanation h2
-  :height 22px
-  :background-color #FF0000
-  :border none
-  :padding 5px
-  :font-size 18px
-  :margin 5px 0px
-  
 .fieldWithErrors
   :clear none
 
-div#checkout, div#edit_address
+div#checkout
+  div.inner
+    :display none
+    :padding 10px 2px
+  h2
+    :margin-bottom 0.25em
   select.error, input.error
     :padding 0px
     :background #FFF
@@ -313,35 +332,48 @@ div#checkout, div#edit_address
       :border none
       :padding 0px
       :background #FFF
-          
-
-div#edit_address
-  label
-    :float left
-  label#nickname
-    :width 200px
-    :font-size 10px
-    :top 0px
-    :font-style italic
-  input, select
-    :border 1px solid #EAE8E3
-
-div#checkout
+  label.radio
+    :display inline
   #registration
     :background transparent url(/images/steps/1.png) top right no-repeat
     &.completed,&.disabled
       :background-image none
       h2
         :background transparent url(/images/steps/1_small.png) top left no-repeat
-        :padding-left 32px
+    div#registration_choice
+      :float left
+      :block none
+      :margin-bottom 2em
+      input
+        :float left
+      label
+        :top -4px
+        :width auto
+        :margin 0px 0px 5px 5px
+    div#registration_input
+      :float left
+      :margin-left 100px
+      input
+        :border 1px solid #BBB
+    div#guest_user, div#existing_user
+      :display none
+    div#registration_error
+      :width 100%
+    div#already_logged_in
+      :display none
   #billing
+    input
+      :border 1px solid #BBB
     :background transparent url(/images/steps/2.png) top right no-repeat
     &.completed,&.disabled
       :background-image none
       h2
         :background transparent url(/images/steps/2_small.png) top left no-repeat
-        :padding-left 32px
   #shipping
+    label#use_billing
+      :top -3px
+    input
+      :border 1px solid #BBB
     :background transparent url(/images/steps/3.png) top right no-repeat
     &.completed,&.disabled
       :background-image none
@@ -349,29 +381,51 @@ div#checkout
         :background transparent url(/images/steps/3_small.png) top left no-repeat
         :padding-left 32px
   #shipping_method
+    div.inner
+      :padding-top 0px
+    div#methods
+      :padding-bottom 5px
     :background transparent url(/images/steps/4.png) top right no-repeat
     &.completed,&.disabled
       :background-image none
       h2
         :background transparent url(/images/steps/4_small.png) top left no-repeat
-        :padding-left 32px
+    div#methods p input
+      :float left
+    div#methods p label
+      :margin 0px 0px 5px 5px
+      :top -2px
   #payment
     :background transparent url(/images/steps/5.png) top right no-repeat
     &.completed,&.disabled
       :background-image none
       h2
         :background transparent url(/images/steps/5_small.png) top left no-repeat
-        :padding-left 32px
+    p select
+      :width 75px
   #confirmation
     :background transparent url(/images/steps/6.png) top right no-repeat
     &.completed,&.disabled
       :background-image none
       h2
         :background transparent url(/images/steps/6_small.png) top left no-repeat
-        :padding-left 32px
+    table.order-summary
+      .price, .qty
+        :width 165px
+      .total_display
+        :width 300px
+        span
+          :display block
+          :text-align right
+          :padding-right 150px
+    div#bdisplay, div#sdisplay
+      :float left
+      :width 300px
+      :clear right
   .checkout
     &.disabled, &.completed
       h2
+        :padding-left 32px
         :color #AFAFAF
         :font-size 1.4em
         :padding-bottom 10px
@@ -383,19 +437,6 @@ div#checkout
       h2
         :color #111
         :border-color #999
-  label.radio
-    :display inline
-  .inner
-    :padding 10px
-  .saved_addresses
-    :display none
-    span
-      :display block
-      :margin-bottom 10px
-  input.saved_radio, label.saved_label
-    :display none
-  div#creditcard p select
-    :width 75px
   input#continue_billing, input#continue_shipping
     :cursor pointer
     :width 100px
@@ -405,34 +446,6 @@ div#checkout
   p input#continue_registration, p input#continue_shipping_method,  p input#continue_payment,  #confirm_order .inner input
     :cursor pointer
     :width 100px
-  div#bdisplay, div#sdisplay
-    :float left
-    :width 300px
-    :clear right  
-  div#registration_choice
-    :float left
-    :block none     
-    :margin-bottom 2em
-    label 
-      :width auto
-  div#registration_input
-    :float left
-    :margin-left 100px
-    div#guest_user, div#existing_user
-      :display none 
-  div#registration_error
-    :width 100%
-  div#methods p input
-    :float left
-  div#methods p label
-    :margin 0px 0px 10px 5px
-    :top -2px
-
-form#checkout_form
-  div.inner
-    :display none
-  div#already_logged_in
-    :display none
 
 .form-buttons
   :clear both
@@ -539,10 +552,15 @@ table
 .flash
   :-moz-border-radius 5px
   :-webkit-border-radius 5px
+  &.notice,&.errors
+    :font-size 1.3em
+    :margin-bottom 1em
+    :padding 0.8em
   &.notice
     :background #cdf url(/images/shadow_top.png) 0 -50px repeat-x
-    :border 1px solid #9ac
     :color #569
-    :font-size 1.3em
-  &.error
-    :color #900
+    :border 1px solid #9ac
+  &.errors
+    :color #000
+    :background #F4B4B4 url(/images/shadow_top.png) 0 -50px repeat-x
+    :border 1px solid #000

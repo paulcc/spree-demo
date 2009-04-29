@@ -153,7 +153,7 @@ var shift_to_region = function(active) {
       if(active == regions[i]) {
         $('div#' + regions[i] + ' h2').unbind('click').css('cursor', 'default');
         $('div#' + regions[i] + ' div.inner').show('fast');
-        $('div#' + regions[i]).removeClass('checkout_disabled').removeClass('disabled');
+        $('div#' + regions[i]).removeClass('checkout_disabled').removeClass('disabled').removeClass('completed');
         found = 1;
       }
       else {
@@ -164,7 +164,7 @@ var shift_to_region = function(active) {
     } else {
       $('div#' + regions[i] + ' h2').unbind('click').css('cursor', 'default');
       $('div#' + regions[i] + ' div.inner').hide('fast');
-      $('div#' + regions[i]).addClass('checkout_disabled');
+      $('div#' + regions[i]).addClass('checkout_disabled').addClass('disabled').removeClass('completed');
     }
   }                                                                         
   if (active == 'confirmation') {
@@ -249,7 +249,7 @@ var submit_shipping_method = function() {
       dataType: "json",
       data: $('#checkout_form').serialize(),
       success: function(json) {  
-        update_confirmation(json.order); 
+        update_confirmation(json);
       },
       error: function (XMLHttpRequest, textStatus, errorThrown) {
         // TODO - put some real error handling in here
@@ -283,7 +283,7 @@ var update_shipping_methods = function(methods) {
     var l = $(document.createElement('label'))
                 .attr('for', s)
                 .html(s)
-                .css('top', '-1px')
+                .css('top', '-4px')
                 .css('width', '300px');
     $('div#methods').append($(p).append(i).append(l));
   });
@@ -317,7 +317,7 @@ var submit_registration = function() {
 
 var ajax_login = function() {
   $.ajax({
-	async: false,
+    async: false,
     type: "POST",
     url: '/user_session',                                 
     beforeSend : function (xhr) {
@@ -327,9 +327,9 @@ var ajax_login = function() {
     data: $('#checkout_form').serialize(),
     success: function(result) {  
       if (result) {
-	    $('div#already_logged_in').show();
-		$('div#register_or_guest').hide();
-        // todo update login partial
+        $('div#already_logged_in').show();
+        $('div#register_or_guest').hide();
+        update_login();
       } else {
         registration_error("Invalid username or password.");
       };
@@ -342,7 +342,7 @@ var ajax_login = function() {
 
 var ajax_register = function() {
   $.ajax({
-		async: false,
+    async: false,
     type: "POST",
     url: '/users',                                 
     beforeSend : function (xhr) {
@@ -352,9 +352,9 @@ var ajax_register = function() {
     data: $('#checkout_form').serialize(),
     success: function(result) {  
       if (result == true) {
-				$('div#already_logged_in').show();
-				$('div#register_or_guest').hide();
-        // todo update login partial
+        $('div#already_logged_in').show();
+        $('div#register_or_guest').hide();
+        update_login();
       } else {                                         
         var error_msg = "Unable to register user";              
         for (var i=0; i < result.length; i++) {
@@ -381,4 +381,21 @@ var submit_payment = function() {
 var submit_confirmation = function() {  
   //$('form').submit();
   $('#post-final').click();
+};
+
+// update login partial
+var update_login = function() {
+  $.ajax({
+    url: '/user_session/login_bar',                                 
+    beforeSend : function (xhr) {
+      xhr.setRequestHeader('Accept-Encoding', 'identity');
+    },      
+    dataType: "html",
+    success: function(result) {
+	 		$("div#login-bar").html(result);  
+    },
+    error: function (XMLHttpRequest, textStatus, errorThrown) {
+      // TODO (maybe do nothing)
+    }
+  });  	
 };
