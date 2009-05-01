@@ -1,13 +1,32 @@
-var regions = new Array('billing', 'shipping', 'shipping_method', 'creditcard', 'confirm_order');
-
-/*
-$(document).ajaxSend(function(event, request, settings) {
-  if (typeof(AUTH_TOKEN) == "undefined") return;
-  // settings.data is a serialized string like "foo=bar&baz=boink" (or null)
-  settings.data = settings.data || "";
-  settings.data += (settings.data ? "&" : "") + "authenticity_token=" + encodeURIComponent(AUTH_TOKEN);
-});
-*/
+//On page load
+$(function() {  
+  $('#checkout_same_address').sameAddress();
+  $('span#bcountry select').change(function() { update_state('b'); });
+  $('span#scountry select').change(function() { update_state('s'); });
+  get_states();
+  
+  // hook up the continue buttons for each section
+  for(var i=0; i < regions.length; i++) {     
+    var section = regions[i];                          
+    $('#continue_' + section).click(function() { eval( "continue_button(this);") });   
+    
+    // enter key should be same as continue button (don't submit form though)
+    $('#' + section + ' input').bind("keyup", section, function(e) {
+      if(e.keyCode == 13) {      
+        continue_section(e.data);
+      }
+    });
+  }                          
+  //disable submit
+  $(':submit').attr('disabled', 'disbled');
+      
+  // hookup the radio buttons for registration
+  $('#choose_register').click(function() { $('div#new_user').show(); $('div#guest_user, div#existing_user').hide(); }).attr('checked', true);
+  $('#choose_existing').click(function() { $('div#existing_user').show(); $('div#guest_user, div#new_user').hide(); });
+  $('#choose_guest').click(function() { $('div#guest_user').show(); $('div#existing_user, div#new_user').hide(); });	
+  // activate first region
+  shift_to_region(regions[0]);  
+})
 
 jQuery.fn.sameAddress = function() {
   this.click(function() {
@@ -21,20 +40,7 @@ jQuery.fn.sameAddress = function() {
     })
     update_state('s');
   })
-}
-
-//On page load
-$(function() {  
-  $('#checkout_presenter_same_address').sameAddress();
-  $('span#bcountry select').change(function() { update_state('b'); });
-  $('span#scountry select').change(function() { update_state('s'); });
-  get_states();
-  $('#validate_billing').click(function() { if(validate_section('billing')) { submit_billing(); }});
-  $('#validate_shipping').click(function() { if(validate_section('shipping')) { submit_shipping(); }});
-  $('#select_shipping_method').click(function() { submit_shipping_method(); });  
-  $('#confirm_payment').click(function() { if(validate_section('creditcard')) { confirm_payment(); }});
-  $('form#checkout_form').submit(function() { return !($('div#confirm_order').hasClass('checkout_disabled')); }); 
-})
+};
 
 //Initial state mapper on page load
 var state_mapper;
@@ -72,7 +78,6 @@ var chg_state_input_element = function (parent, html) {
   return html;
 };
 
-
 // TODO: better as sibling dummy state ?
 // Update the input method for address.state 
 var update_state = function(region) {
@@ -84,12 +89,13 @@ var update_state = function(region) {
   if(states) {
     // recreate state selection list
     replacement = $(document.createElement('select'));
-    $.each(states, function(id,nm) {
+    var states_with_blank = [["",""]].concat(states);
+    $.each(states_with_blank, function(pos,id_nm) {
       var opt = $(document.createElement('option'))
-                .attr('value', id)
-                .html(nm);
-      replacement.append(opt)
-      if (id == hidden_element.val()) { opt.attr('selected', 'true') }
+                .attr('value', id_nm[0])
+                .html(id_nm[1]);
+      replacement.append(opt);
+      if (id_nm[0] == hidden_element.val()) { opt.attr('selected', 'true') }
         // set this directly IFF the old value is still valid
     });
   } else {
@@ -107,12 +113,31 @@ var update_state = function(region) {
   replacement.change(function() {
     $('input#hidden_' + region + 'state').val($(this).val());
   });
+};       
+
+var continue_button = function(button) {
+  continue_section(button.id.substring(9));
+};  
+
+var continue_section = function(section) {
+  // validate
+  if (!validate_section(section)) { return; };
+  // submit
+  var success = eval("submit_" + section + "();");
+  if (!success) { return; }
+  // move to next section      
+  for(var i=0; i<regions.length; i++) {
+    if (regions[i] == section) {
+      if (i == (regions.length - 1)) { break; };
+      shift_to_region(regions[i+1]);
+    }
+  }  
 };
 
 var validate_section = function(region) {
   var validator = $('form#checkout_form').validate();
   var valid = true;
-  $('div#' + region + ' input, div#' + region + ' select, div#' + region + ' textarea').each(function() {
+  $('div#' + region + ' input:visible, div#' + region + ' select:visible, div#' + region + ' textarea:visible').each(function() {
     if(!validator.element(this)) {
       valid = false;
     }
@@ -121,39 +146,43 @@ var validate_section = function(region) {
 };
 
 var shift_to_region = function(active) {
-  $('div#flash-errors').remove();  
+  if (active != regions[0]) { $('div#flash-errors').remove(); }
   var found = 0;
   for(var i=0; i<regions.length; i++) {
     if(!found) {
       if(active == regions[i]) {
         $('div#' + regions[i] + ' h2').unbind('click').css('cursor', 'default');
         $('div#' + regions[i] + ' div.inner').show('fast');
-        $('div#' + regions[i]).removeClass('checkout_disabled');
+        $('div#' + regions[i]).removeClass('checkout_disabled').removeClass('disabled').removeClass('completed');
         found = 1;
       }
       else {
         $('div#' + regions[i] + ' h2').unbind('click').css('cursor', 'pointer').click(function() {shift_to_region($(this).parent().attr('id'));});
         $('div#' + regions[i] + ' div.inner').hide('fast');
+        $('div#' + regions[i]).addClass('disabled').addClass('completed');
       }
     } else {
       $('div#' + regions[i] + ' h2').unbind('click').css('cursor', 'default');
       $('div#' + regions[i] + ' div.inner').hide('fast');
-      $('div#' + regions[i]).addClass('checkout_disabled');
+      $('div#' + regions[i]).addClass('checkout_disabled').addClass('disabled').removeClass('completed');
     }
   }                                                                         
-  if (active == 'confirm_order') {
+  if (active == 'confirmation') {
     $("input#final_answer").attr("value", "yes");    
+    $('#continue_confirmation').removeAttr('disabled', 'disabled'); 
+    $('#post-final').removeAttr('disabled', 'disabled'); 
   } else {
     // indicates order is ready to be processed (as opposed to simply updated)
-    $("input#final_answer").attr("value", "");    
+    $("input#final_answer").attr("value", "");
+    // disable form submit
+    $(':submit').attr('disabled', 'disbled'); 
   }
   return;
 };
 
 var submit_billing = function() {
-  shift_to_region('shipping');
   build_address('Billing Address', 'b');
-  return;
+  return true;
 };
 
 var build_address = function(title, region) {
@@ -182,7 +211,7 @@ var submit_shipping = function() {
   // Save what we have so far and get the list of shipping methods via AJAX
   $.ajax({
     type: "POST",
-    url: 'complete',                                 
+    url: 'checkout',                                 
     beforeSend : function (xhr) {
       xhr.setRequestHeader('Accept-Encoding', 'identity');
     },      
@@ -193,12 +222,12 @@ var submit_shipping = function() {
     },
     error: function (XMLHttpRequest, textStatus, errorThrown) {
       // TODO - put some real error handling in here
-      $("#error").html(XMLHttpRequest.responseText);
+      $("#error").html(XMLHttpRequest.responseText); 
+      return false;
     }
   });  
-  shift_to_region('shipping_method');
   build_address('Shipping Address', 's');
-  return;
+  return true;
 };
                      
 var submit_shipping_method = function() {
@@ -213,25 +242,27 @@ var submit_shipping_method = function() {
     // Save what we have so far and get the updated order totals via AJAX
     $.ajax({
       type: "POST",
-      url: 'complete',                                 
+      url: 'checkout',                                 
       beforeSend : function (xhr) {
         xhr.setRequestHeader('Accept-Encoding', 'identity');
       },      
       dataType: "json",
       data: $('#checkout_form').serialize(),
       success: function(json) {  
-        update_confirmation(json.order); 
+        update_confirmation(json);
       },
       error: function (XMLHttpRequest, textStatus, errorThrown) {
         // TODO - put some real error handling in here
-        //$("#error").html(XMLHttpRequest.responseText);
+        //$("#error").html(XMLHttpRequest.responseText);           
+        return false;
       }
     });  
-    shift_to_region('creditcard');
+    return true;
   } else {
     var p = document.createElement('p');
     $(p).append($(document.createElement('label')).addClass('error').html('Please select a shipping method').css('width', '300px').css('top', '0px'));
     $('div#methods').append(p);
+    return false;
   }
 }; 
 
@@ -246,27 +277,125 @@ var update_shipping_methods = function(methods) {
                 .attr('name', 'method_id')
                 .val(this.id)
                 .click(function() { $('div#methods input').attr('checked', ''); $(this).attr('checked', 'checked'); });
-    if($(methods.length) == 1) {
+    if($(methods).length == 1) {
       i.attr('checked', 'checked');
     }
     var l = $(document.createElement('label'))
                 .attr('for', s)
                 .html(s)
-                .css('top', '-1px')
+                .css('top', '-4px')
                 .css('width', '300px');
     $('div#methods').append($(p).append(i).append(l));
   });
   $('div#methods input:first').attr('validate', 'required:true');
   return;
-}                                     
+};                                     
 
 var update_confirmation = function(order) {
   $('span#order_total').html(order.order_total);
   $('span#ship_amount').html(order.ship_amount);
   $('span#tax_amount').html(order.tax_amount);                                  
   $('span#ship_method').html(order.ship_method);                                    
-}
+};      
 
-var confirm_payment = function() {
-  shift_to_region('confirm_order');
+var submit_registration = function() {
+  // no need to do any ajax, user is already logged in
+  if ($('div#already_logged_in:hidden').size() == 0) return true;
+  var register_method = $('input[name=choose_registration]:checked').val();
+  
+  $('div#registration_error').removeClass('error').html('');    
+
+  if (register_method == 'existing') {
+	ajax_login();
+  }
+  else if (register_method == 'register') {
+	ajax_register();
+  }
+		
+  return ($('div#registration_error:hidden').size() == 1);  
+};
+
+var ajax_login = function() {
+  $.ajax({
+    async: false,
+    type: "POST",
+    url: '/user_session',                                 
+    beforeSend : function (xhr) {
+      xhr.setRequestHeader('Accept-Encoding', 'identity');
+    },      
+    dataType: "json",
+    data: $('#checkout_form').serialize(),
+    success: function(result) {  
+      if (result) {
+        $('div#already_logged_in').show();
+        $('div#register_or_guest').hide();
+        update_login();
+      } else {
+        registration_error("Invalid username or password.");
+      };
+    },
+    error: function (XMLHttpRequest, textStatus, errorThrown) {
+      registration_error("Unable to perform login due to a server error.");
+    }
+  });  	
+};
+
+var ajax_register = function() {
+  $.ajax({
+    async: false,
+    type: "POST",
+    url: '/users',                                 
+    beforeSend : function (xhr) {
+      xhr.setRequestHeader('Accept-Encoding', 'identity');
+    },      
+    dataType: "json",
+    data: $('#checkout_form').serialize(),
+    success: function(result) {  
+      if (result == true) {
+        $('div#already_logged_in').show();
+        $('div#register_or_guest').hide();
+        update_login();
+      } else {                                         
+        var error_msg = "Unable to register user";              
+        for (var i=0; i < result.length; i++) {
+          error_msg += "<br/>";
+          error_msg += result[i][0] + ": " + result[i][1];
+        }
+        registration_error(error_msg);
+      };
+    },
+    error: function (XMLHttpRequest, textStatus, errorThrown) {
+      registration_error("Unable to register due to a server error.");    
+    }
+  });  	
+};
+
+var registration_error = function(error_message) {
+  $('div#registration_error').addClass('error').html(error_message);
+};
+
+var submit_payment = function() {             
+  return true;
+};    
+
+var submit_confirmation = function() {  
+  //$('form').submit();
+  $('#post-final').click();
+};
+
+// update login partial
+var update_login = function() {
+  $.ajax({
+    url: '/user_session/login_bar',                                 
+    beforeSend : function (xhr) {
+      xhr.setRequestHeader('Accept-Encoding', 'identity');
+    },      
+    dataType: "html",
+    success: function(result) {
+	 		$("div#login-bar").html(result);  
+    },
+    error: function (XMLHttpRequest, textStatus, errorThrown) {
+      // TODO (maybe do nothing)
+    }
+  });  	
 };
