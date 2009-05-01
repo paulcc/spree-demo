@@ -38,7 +38,7 @@ namespace :deploy do
   end
   desc "Update to Spree edge (instead of lastes commit for submodule)"
   task :update_to_edge do
-    run("cd #{release_path}/vendor/spree; git pull origin master")
+    run("cd #{release_path}/vendor/spree; git pull origin 0_8_x")
   end
 end
 after 'deploy:update_code', 'deploy:symlink_shared'
