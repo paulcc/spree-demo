@@ -1,6 +1,6 @@
 [submodule "vendor/spree"]
 	path = vendor/spree
-	url = git://github.com/schof/spree.git
+	url = git://github.com/railsdog/spree.git
 [submodule "vendor/extensions/blog"]
 	path = vendor/extensions/blog
 	url = git://github.com/paulcc/spree-blog.git
