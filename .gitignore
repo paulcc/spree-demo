@@ -3,3 +3,8 @@ db/*
 log/*
 public/assets
 public/stylesheets/compiled
+
+public/images/blog.jpg
+public/images/view.JPG
+public/stylesheets/reviews.css
+
