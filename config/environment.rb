@@ -5,7 +5,7 @@
 # ENV['RAILS_ENV'] ||= 'production'
 
 # Specifies gem version of Rails to use when vendor/rails is not present
-SPREE_GEM_VERSION = '0.6.99' unless defined? SPREE_GEM_VERSION
+SPREE_GEM_VERSION = '0.8.99' unless defined? SPREE_GEM_VERSION
           
 # Bootstrap the Rails environment, frameworks, and default configuration
 require File.join(File.dirname(__FILE__), 'boot')
@@ -26,11 +26,11 @@ Spree::Initializer.run do |config|
   # config.gem "hpricot", :version => '0.6', :source => "http://code.whytheluckystiff.net"
   # config.gem "aws-s3", :lib => "aws/s3"
 
-  config.gem "highline", :version => '1.4.0'
+  config.gem "highline", :version => '>=1.4.0'
   config.gem 'authlogic', :version => '2.0.5'
-  config.gem "activemerchant", :lib => "active_merchant", :version => '1.4.1'
+  config.gem "activemerchant", :lib => "active_merchant", :version => '>=1.4.1'
   config.gem "tlsmail", :version => '0.0.1'
-  config.gem 'activerecord-tableless', :lib => 'tableless', :version => '0.1.0'
+  config.gem 'activerecord-tableless', :lib => 'tableless', :version => '>=0.1.0'
   config.gem 'haml', :version => "2.1.0"
   config.gem 'chriseppstein-compass', :lib => 'compass', :source => "http://gems.github.com", :version => '0.6.1'
   config.gem 'calendar_date_select', :version => '1.15'    
