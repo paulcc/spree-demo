@@ -11,6 +11,4 @@
   </td>
 <% end %>
 
-<%= render :partial => 'shared/paginate', :locals => {:collection => @products, :options => {}} unless @products.empty? %>
-
-
+<%= page_links(:prev => "&#171; #{t('previous')}", :next => "#{t('next')} &#187;") if @search.page_count > 1 %>
