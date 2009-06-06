@@ -4,7 +4,10 @@ log/*
 public/assets
 public/stylesheets/compiled
 
+# from paulcc's extensions
 public/images/blog.jpg
 public/images/view.JPG
+public/images/mcsc_logo.gif
+public/images/vbv_logo_small.gif
 public/stylesheets/reviews.css
 
