@@ -1,23 +1,19 @@
-<div id="product-listing">
-  <ul class="product-listing">
-    <% products.each do |product| %>
-      <% if Spree::Config[:show_zero_stock_products] || product.has_stock? %>
-        <li class="product preview" id="product_<%= product.id %>">
-          <% if taxon.nil? %>
-            <%= link_to small_image(product), product %>
-              <%= link_to product.name, product %>
-         <% else %>
-           <%= link_to small_image(product), seo_url(taxon, product) %>
-              <%= link_to product.name, seo_url(taxon, product) %>
-          <% end %>
-          <span style="font-size: 65%;">
-            <%= render :partial => 'shortrating', :locals => {:product => product} %>
-          </span>
-          <br/>
-          <b><%= product_price(product) %></b>
-        </li>
-      <% end %>
+<ul class="product-listing">
+  <% products.each do |product| %>
+    <% if Spree::Config[:show_zero_stock_products] || product.has_stock? %>
+      <li id="product_<%= product.id %>">
+        <% if taxon.nil? %>
+          <%= link_to small_image(product), product %>
+          <%= link_to product.name + "<span class='price selling'>#{product_price(product)}</span>", product, :class => 'info' %>
+        <% else %>
+          <%= link_to small_image(product), seo_url(taxon, product) %>
+          <%= link_to product.name + "<span class='price selling'>#{product_price(product)}</span>", seo_url(taxon, product), :class => 'info' %>
+        <% end %>
+        <span style="font-size: 95%;">
+          <%= render :partial => 'shortrating', :locals => {:product => product} %>
+        </span>
+      </li>
     <% end %>
-  </ul>
-</div>
- 
+  <% end %>
+</ul>
+<hr class="space" />
