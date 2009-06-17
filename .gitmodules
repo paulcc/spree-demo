@@ -13,3 +13,6 @@
 [submodule "vendor/extensions/protx3ds_gateway"]
 	path = vendor/extensions/protx3ds_gateway
 	url = git://github.com/paulcc/spree-protx3ds-gateway.git
+[submodule "vendor/extensions/accessories"]
+	path = vendor/extensions/accessories
+	url = git://github.com/paulcc/spree-accessories.git
