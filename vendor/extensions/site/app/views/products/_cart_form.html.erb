@@ -43,9 +43,11 @@
 
 </div>
 
-<div id="accessories" class="clear">
-  <h2>Product accessories</h2>
-  <%= render :partial => 'accessories', :locals => {:product => @product} %>
-</div>
+<% unless @product.accessories.empty? %>
+  <div id="accessories" class="clear">
+    <h2>Product accessories</h2>
+    <%= render :partial => 'accessories', :locals => {:product => @product} %>
+  </div>
+<% end %>
 
 <% end %>
