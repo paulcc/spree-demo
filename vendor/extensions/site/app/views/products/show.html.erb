@@ -19,10 +19,13 @@
 
 <%= render 'cart_form' %>
 
-<div id="recommendations" class="clear">
-  <h2>You may also be interested in these products</h2>
-  <%= render :partial => "shared/products.html.erb", :locals => {:products => random_recommendations(@products, 4), :taxon => @taxon } %>
-</div>
+<% recommendations = random_recommendations(@product, 4) %>
+<% unless recommendations.empty? %>
+  <div id="recommendations" class="clear">
+    <h2>You may also be interested in these products</h2>
+    <%= render :partial => "shared/products.html.erb", :locals => {:products => recommendations, :taxon => @taxon } %>
+  </div>
+<% end %>
 
 <div id="reviews" class="clear">
   <h2>Customer reviews</h2>
