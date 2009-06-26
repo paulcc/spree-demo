@@ -16,3 +16,6 @@
 [submodule "vendor/extensions/accessories"]
 	path = vendor/extensions/accessories
 	url = git://github.com/paulcc/spree-accessories.git
+[submodule "vendor/extensions/recommendations"]
+	path = vendor/extensions/recommendations
+	url = git://github.com/paulcc/spree-recommendations.git
